@@ -1,17 +1,25 @@
 <template>
   <div id="app">
+    <!--
     <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    -->
+    <NavMenu msg="Строка меню"/>
+    <SettingsPage msg="Строка меню"/>
+    <!--HelloWorld msg="Welcome to Your Vue.js App"/-->
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import NavMenu from './components/NavMenu.vue'
+import SettingsPage from './components/Settings.vue'
+// import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    NavMenu,
+    SettingsPage,
+    //,     HelloWorld
   }
 }
 </script>
