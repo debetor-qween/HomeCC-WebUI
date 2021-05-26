@@ -1,10 +1,10 @@
 <template>
   <div class="SettingsPage">
-      <Button @click="openFindThingsDialog" label="Найти устройство" icon="pi pi-search" iconPos="left" class="p-button-sm"/>
+      <Button @click="openFindThingDialog" label="Найти устройство" icon="pi pi-search" iconPos="left" class="p-button-sm"/>
       <Button  @click="openAddThingDialog" label="Добавить устройство вручную" icon="pi pi-cog" iconPos="left" class="p-button-sm" />
       
       <p class="listheader" >СПИСОК УСТРОЙСТВ</p>
-      <DataTable :value="things" selectionMode="single" dataKey="id" class="p-datatable-gridlines">
+      <DataTable :value="Things" selectionMode="single" dataKey="id" class="p-datatable-gridlines">
         <Column field="UID" header="Идентификатор"></Column>
         <Column field="label" header="Наименование"></Column>
         <Column field="statusInfo.status" header="Состояние"></Column>
@@ -18,32 +18,20 @@
       <p style="font: italic small-caps bold; text-align: center;">Входящие: {{inboxContent.length}}</p>
 
       <div>
-        <FindThings v-bind:displayFindThingsDialog="displayFindDialog" v-on:fdinvisible="closeFinfThigsDialog"></FindThings>
+        <FindThing v-bind:displayFindThingDialog="displayFindDialog" v-on:fdinvisible="closeFindThingDialog"></FindThing>
       </div>
 
-      <div class="AddThing">
-        <Dialog header="Добавить устройство вручную" :visible.sync="displayAddThingDialog" :style="{width: '50vw'}" :modal="true" :contentStyle="{overflow: 'visible'}">
-          <p class="p-m-0">Настройка устройства:</p>
-          <div class="p-field p-col-12 p-md-4">
-               <span class="p-float-label">
-              <Dropdown id="dropdown" v-model="value8" :options="dicThingTypes" optionLabel="name" />
-              <label for="dropdown">Выберите тип устройства</label>
-            </span>
-          </div>
-
-          <template #footer>
-            <Button label="Отменить" icon="pi pi-times" @click="closeAddThingDialog" class="p-button-text"/>
-            <Button label="Сохранить" icon="pi pi-check" @click="closeAddThingDialog" autofocus />
-          </template>
-        </Dialog>
+      <div>
+        <AddThing v-bind:displayAddThingDialog="displayAddDialog" v-on:addinvisible="closeAddThingDialog"></AddThing>
       </div>
   </div>
 </template>
 
 <script>
 // Здесь должен быть код javascript
-import ThingsService from '../services/ThingsService';
-import FindThings from './FindThings.vue'
+import ThingService from '../services/ThingsService';
+import FindThing from './FindThing.vue';
+import AddThing from './AddThing.vue';
 
 export default {
   name: 'SettingsPage',
@@ -52,47 +40,42 @@ export default {
   },
   data () {
     return {
-      things: [],
+      Things: [],
       inboxContent: [],
-      displayFindDialog: "F",
-      displayAddThingDialog: false,
-      value8: null,
-      dicThingTypes: [
-        {name: 'Сетевое устройство', code: 'network'},
-        {name: 'Прогноз погоды', code: 'openweathermap'},
-        {name: 'Активатор', code: 'activator'},
-      ],
+      displayFindDialog: false,
+      displayAddDialog: false,
     }
   },
   components: {
-    FindThings,
+    FindThing,
+    AddThing,
   },
 
   methods: {
-    fetchThings: function () {
-      this.thingsService.getThingsSummary().then(data =>{this.things = data});
+    fetchThing: function () {
+      this.ThingService.getThingSummary().then(data =>{this.Things = data});
     },
     fetchInbox: function () {
-      this.thingsService.getInboxContent().then(data =>{this.inboxContent = data});
+      this.ThingService.getInboxContent().then(data =>{this.inboxContent = data});
     },
-    openFindThingsDialog: function() {
-      this.displayFindDialog = "T";
+    openFindThingDialog: function() {
+      this.displayFindDialog = true;
     },
-    closeFinfThigsDialog: function() {
-      this.displayFindDialog = "F";
+    closeFindThingDialog: function() {
+      this.displayFindDialog = false;
     },
     openAddThingDialog: function() {
-      this.displayAddThingDialog = true;
-      this.displayFindDialog = "F";
+      this.displayAddDialog = true;
     },
     closeAddThingDialog: function() {
-      this.displayAddThingDialog = false;
+      this.displayAddDialog = false;
     }
   },
   created: function () {
-    this.displayFindDialog = "F";
-    this.thingsService = new ThingsService();
-    this.fetchThings();
+    this.displayFindDialog = false;
+    this.displayAddDialog = false;
+    this.ThingService = new ThingService();
+    this.fetchThing();
     this.fetchInbox ();
   }
   
