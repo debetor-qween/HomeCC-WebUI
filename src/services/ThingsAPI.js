@@ -10,6 +10,23 @@ export default class ThingService {
         return axios.get(URI, {headers: {"Authorization": TKEY}})
             .then(res => res.data);
     }
+    getThingTypes(bindingId) {
+        const URI = "http://localhost:88/rest/thing-types?bindingId="+bindingId;
+        return axios.get(URI, {headers: {"Authorization": TKEY}})
+            .then(res => res.data);
+    }
+
+    postThing(data) {
+        const URI = "http://localhost:88/rest/things";
+        return axios.post(URI, data, {headers: {"Authorization": TKEY}});
+           
+    }
+
+    deleteThing(thingUID) {
+        const URI = 'http://localhost:88/rest/things/' + thingUID + '?force=true';
+        return axios.delete(URI, {headers: {"Authorization": TKEY}});
+           
+    }
 
     getInboxContent() {
         const URI = "http://localhost:88/rest/inbox";

@@ -9,9 +9,9 @@
         <Column field="label" header="Наименование"></Column>
         <Column field="statusInfo.status" header="Состояние"></Column>
         <Column headerStyle="width: 18em" bodyStyle="text-align: center">
-          <template #body>
-            <Button type="button" icon="pi pi-times" class="p-button-danger" style="margin-right: .5em"></Button>
-            <Button type="button" icon="pi pi-cog" class="p-button-warning"></Button>
+          <template #body="slotProps">
+            <Button type="button" @click="openDelThingDialog(slotProps.data)" icon="pi pi-times" class="p-button-danger" style="margin-right: .5em"></Button>
+            <Button type="button" @click="editThing(slotProps.data)" icon="pi pi-cog" class="p-button-warning"></Button>
           </template>
         </Column>
       </DataTable>
@@ -22,16 +22,21 @@
       </div>
 
       <div>
-        <AddThing v-bind:displayAddThingDialog="displayAddDialog" v-on:addinvisible="closeAddThingDialog"></AddThing>
+        <AddThing v-bind:displayAddThingDialog="displayAddDialog" v-on:addinvisible="closeAddThingDialog" v-on:newThing="fetchThing"></AddThing>
+      </div>
+
+      <div>
+        <DelThing v-bind:showDialog="displayDelDialog" v-bind:thing="Thing" v-on:delinvisible="closeDelThingDialog" v-on:delThing="fetchThing"></DelThing>
       </div>
   </div>
 </template>
 
 <script>
 // Здесь должен быть код javascript
-import ThingService from '../services/ThingsService';
+import ThingService from '../services/ThingsAPI';
 import FindThing from './FindThing.vue';
 import AddThing from './AddThing.vue';
+import DelThing from './DelThing.vue';
 
 export default {
   name: 'SettingsPage',
@@ -41,14 +46,17 @@ export default {
   data () {
     return {
       Things: [],
+      Thing: {},
       inboxContent: [],
       displayFindDialog: false,
       displayAddDialog: false,
+      displayDelDialog: false,
     }
   },
   components: {
     FindThing,
     AddThing,
+    DelThing,
   },
 
   methods: {
@@ -69,7 +77,19 @@ export default {
     },
     closeAddThingDialog: function() {
       this.displayAddDialog = false;
-    }
+    },
+    openDelThingDialog: function(Thing) {
+      this.Thing = Thing;
+      console.log(Thing);
+      this.displayDelDialog = true;
+    },
+    closeDelThingDialog: function() {
+      this.displayDelDialog = false;
+    },
+    editThing: function(Thing) {
+      this.Thing = Thing;
+      console.log(Thing);
+    },
   },
   created: function () {
     this.displayFindDialog = false;
